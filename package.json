@@ -1,0 +1,43 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "Diplom",
+  "main": "app.js",
+  "scripts": {
+    "lint": "npx eslint .",
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PavelNosov1986/express-mesto-gha.git"
+  },
+  "keywords": [],
+  "author": "Pavel Nosov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PavelNosov1986/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/PavelNosov1986/express-mesto-gha#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.1",
+    "celebrate": "^15.0.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-winston": "^4.2.0",
+    "joi": "^17.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.8.4",
+    "path": "^0.12.7",
+    "validator": "^13.9.0",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.32.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "nodemon": "^2.0.20"
+  }
+}
