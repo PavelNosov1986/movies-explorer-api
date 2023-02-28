@@ -1,33 +1,49 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const isUrl = require('validator/lib/isURL');
+Joi.objectId = require('joi-objectid')(Joi);
+
+const customValidationUrl = (value, helpers) => {
+  if (isUrl(value)) {
+    return value;
+  }
+  return helpers.message('Передана некорректная ссылка');
+};
+
 const {
-  getMovie,
+  getMovies,
   createMovie,
   deleteMovie,
-} = require('../controllers/movie');
+} = require('../controllers/movies');
 
-router.get('/', getMovie);
+router.get('/', getMovies);
 
 router.post(
   '/',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      link: Joi.string()
-        .required()
-        .pattern(
-          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/,
-        ),
+      country: Joi.string().required().min(2),
+      director: Joi.string().required().min(2),
+      duration: Joi.number().required(),
+      year: Joi.string().required(),
+      description: Joi.string().required().min(2),
+      image: Joi.string().required().custom(customValidationUrl),
+      trailerLink: Joi.string().required().custom(customValidationUrl),
+      thumbnail: Joi.string().required().custom(customValidationUrl),
+      movieId: Joi.number().required(),
+      nameRU: Joi.string().required().min(1),
+      nameEN: Joi.string().required().min(1),
     }),
   }),
   createMovie,
 );
 
 router.delete(
-  '/:cardId',
+  '/:_id',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().required().hex().length(24),
+      _id: Joi.objectId(),
     }),
   }),
   deleteMovie,

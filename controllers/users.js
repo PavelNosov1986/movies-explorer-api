@@ -20,7 +20,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findOne({ email, password })
+  return User.findOne({ email })
     .select('+password')
     .then((user) => {
       if (!user) {
@@ -53,9 +53,7 @@ const createUser = (req, res, next) => {
     .then((passHash) => User.create({
       name, email, password: passHash,
     })
-      .then((newUser) => res.status(OK_CODE).send({
-        _id: newUser._id, name, email,
-      })))
+      .then((user) => res.status(OK_CODE).send(user)))
     .catch((err) => {
       if (err.code === 11000) {
         return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
@@ -68,14 +66,12 @@ const createUser = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findById(req.user._id)
     .then((user) => {
       if (user === null) {
         throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
       }
-      return res.send({
-        data: user,
-      });
+      return res.send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
@@ -85,8 +81,10 @@ const getUserById = (req, res, next) => {
     });
 };
 
-const updateUser = (req, res, next, info) => {
-  User.findByIdAndUpdate(req.user._id, info, {
+const updateUser = (req, res, next) => {
+  const { name, email } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { name, email }, {
     new: true,
     runValidators: true,
   })
@@ -94,9 +92,7 @@ const updateUser = (req, res, next, info) => {
       if (user === null) {
         throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
       }
-      return res.send({
-        data: user,
-      });
+      return res.send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {

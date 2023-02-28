@@ -3,12 +3,12 @@ const DEFAULT_ERROR_CODE = 500;
 
 const AUTH_ERROR_MESSAGE = 'Неправильные почта или пароль';
 const UNAUTHORIZED_ERROR_MESSAGE = 'Необходима авторизация';
-const NOT_FOUND_CARD_MESSAGE = 'Передан несуществующий _id карточки.';
+const NOT_FOUND_CARD_MESSAGE = 'Передан несуществующий _id карточки фильма.';
 const NOT_FOUND_USER_MESSAGE = 'Пользователь по указанному _id не найден.';
 const INCORRECT_ERROR_MESSAGE = 'Переданы некорректные данные';
 const DEFAULT_ERROR_MESSAGE = 'Ошибка по умолчанию.';
-
-const regexLinkURL = /^https?:\/\/(?:[a-z0-9\\-]+\.)+[a-z]{2,6}(?:\/[^/#?]+)+\.(?:jpe?g|gif|png|bmp|webp)$/im;
+const IMPOSSIBLE_DELETE_CARD = 'Нельзя удалить чужую карточку фильма';
+const CARDS_DELETED = 'Карточка фильма удалена';
 
 const allowedCors = [
   '*',
@@ -31,5 +31,6 @@ module.exports = {
   UNAUTHORIZED_ERROR_MESSAGE,
   allowedCors,
   DEFAULT_ALLOWED_METHODS,
-  regexLinkURL,
+  IMPOSSIBLE_DELETE_CARD,
+  CARDS_DELETED,
 };
