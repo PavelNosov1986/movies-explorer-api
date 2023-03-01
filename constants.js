@@ -12,9 +12,9 @@ const CARDS_DELETED = 'Карточка фильма удалена';
 
 const allowedCors = [
   '*',
-  'http://api.reactmestofull.nosovp.nomoredomainsclub.ru/cards',
-  'https://reactmestofull.nosovpavel.nomoredomainsclub.ru',
-  'http://api.reactmestofull.nosovp.nomoredomainsclub.ru',
+  'http://api.movies.nosovpavel.nomoredomains.work/movies',
+  'https://movies.nosovpavel.nomoredomains.work',
+  'http://api.movies.nosovpavel.nomoredomains.work',
   'https://localhost:3000',
   'http://localhost:3000',
 ];
