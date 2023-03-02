@@ -53,7 +53,10 @@ const createUser = (req, res, next) => {
     .then((passHash) => User.create({
       name, email, password: passHash,
     })
-      .then((user) => res.status(OK_CODE).send(user)))
+      .then((newUser) => res.status(OK_CODE).send({
+        name: newUser.name,
+        email: newUser.email,
+      })))
     .catch((err) => {
       if (err.code === 11000) {
         return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
@@ -83,20 +86,34 @@ const getUserById = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const { name, email } = req.body;
-
-  User.findByIdAndUpdate(req.user._id, { name, email }, {
-    new: true,
-    runValidators: true,
-  })
+  User.findById(req.user._id)
     .then((user) => {
-      if (user === null) {
-        throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
+      if (user.email === email) {
+        throw new ConflictError('Пользователь с таким email уже зарегистрирован');
+      } else {
+        User.findByIdAndUpdate(req.user._id, { name, email }, {
+          new: true,
+          runValidators: true,
+        })
+          .then((userUpdated) => {
+            if (user === null) {
+              throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
+            }
+            return res.send(userUpdated);
+          })
+          .catch((err) => {
+            if (err.name === 'ValidationError') {
+              return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
+            }
+            return next(err);
+          });
       }
-      return res.send(user);
-    })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлении информации.`));
+    }).catch((err) => {
+      if (err.code === 409) {
+        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+      }
+      if (err.name === 'ValidationError') {
+        return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
       }
       return next(err);
     });

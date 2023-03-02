@@ -5,12 +5,10 @@ const movieSchema = new mongoose.Schema({
   country: {
     type: String,
     required: true,
-    minlength: 2,
   },
   director: {
     type: String,
     required: true,
-    minlength: 2,
   },
   duration: {
     type: Number,
@@ -23,11 +21,9 @@ const movieSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
-    minlength: 2,
   },
   image: {
     type: String,
-    default: '',
     required: true,
     validate: {
       validator: (image) => isUrl(image),
@@ -36,7 +32,6 @@ const movieSchema = new mongoose.Schema({
   },
   trailerLink: {
     type: String,
-    default: '',
     required: true,
     validate: {
       validator: (link) => isUrl(link),
@@ -45,7 +40,6 @@ const movieSchema = new mongoose.Schema({
   },
   thumbnail: {
     type: String,
-    default: '',
     required: true,
     validate: {
       validator: (image) => isUrl(image),
@@ -64,12 +58,10 @@ const movieSchema = new mongoose.Schema({
   nameRU: {
     type: String,
     required: true,
-    minlength: 1,
   },
   nameEN: {
     type: String,
     required: true,
-    minlength: 1,
   },
 });
 
