@@ -23,9 +23,11 @@ app.use(cors);
 
 app.use(routes);
 
-app.use(errors());
-app.use(handleError);
 app.use(errorLogger);
+
+app.use(handleError);
+
+app.use(errors());
 
 app.listen(PORT);
 
