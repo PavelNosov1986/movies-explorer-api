@@ -118,27 +118,60 @@ const getUserById = (req, res, next) => {
 //       return next(err);
 //     });
 // };
-const updateUser = (req, res, next, info) => {
-  User.findByIdAndUpdate(req.user._id, info, {
-    new: true,
-    runValidators: true,
-  })
+
+// const updateUser = (req, res, next, info) => {
+//   User.findByIdAndUpdate(req.user._id, info, {
+//     new: true,
+//     runValidators: true,
+//   })
+//     .then((user) => {
+//       if (user === null) {
+//         throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
+//       }
+//       return res.send({
+//         data: user,
+//       });
+//     })
+//     .catch((err) => {
+//       if (err instanceof mongoose.Error.ValidationError) {
+//         return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлении информации.`));
+//       }
+//       return next(err);
+//     });
+// };
+
+const updateUser = (req, res, next) => {
+  const { name, email } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, email },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
     .then((user) => {
-      if (user === null) {
-        throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
+      if (!user) {
+        throw new NotFoundError(
+          'Пользователь по указанному id не найден.',
+        );
       }
-      return res.send({
-        data: user,
-      });
+
+      return res.send(user);
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлении информации.`));
+      if (err.code === 11000) {
+        next(new ConflictError(
+          `Пользователь с email '${email}' уже существует.`,
+        ));
+      } else if (err.name === 'ValidationError') {
+        next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
-
 
 module.exports = {
   login,
