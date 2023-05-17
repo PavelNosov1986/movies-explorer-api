@@ -84,40 +84,61 @@ const getUserById = (req, res, next) => {
     });
 };
 
-const updateUser = (req, res, next) => {
-  const { name, email } = req.body;
-  User.findById(req.user._id)
+// const updateUser = (req, res, next) => {
+//   const { name, email } = req.body;
+//   User.findById(req.user._id)
+//     .then((user) => {
+//       if (user.email === email) {
+//         throw new ConflictError('Пользователь с таким email уже зарегистрирован');
+//       } else {
+//         User.findByIdAndUpdate(req.user._id, { name, email }, {
+//           new: true,
+//           runValidators: true,
+//         })
+//           .then((userUpdated) => {
+//             if (user === null) {
+//               throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
+//             }
+//             return res.send(userUpdated);
+//           })
+//           .catch((err) => {
+//             if (err.name === 'ValidationError') {
+//               return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
+//             }
+//             return next(err);
+//           });
+//       }
+//     }).catch((err) => {
+//       if (err.code === 409) {
+//         return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+//       }
+//       if (err.name === 'ValidationError') {
+//         return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
+//       }
+//       return next(err);
+//     });
+// };
+const updateUser = (req, res, next, info) => {
+  User.findByIdAndUpdate(req.user._id, info, {
+    new: true,
+    runValidators: true,
+  })
     .then((user) => {
-      if (user.email === email) {
-        throw new ConflictError('Пользователь с таким email уже зарегистрирован');
-      } else {
-        User.findByIdAndUpdate(req.user._id, { name, email }, {
-          new: true,
-          runValidators: true,
-        })
-          .then((userUpdated) => {
-            if (user === null) {
-              throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
-            }
-            return res.send(userUpdated);
-          })
-          .catch((err) => {
-            if (err.name === 'ValidationError') {
-              return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
-            }
-            return next(err);
-          });
+      if (user === null) {
+        throw new NotFoundError(NOT_FOUND_USER_MESSAGE);
       }
-    }).catch((err) => {
-      if (err.code === 409) {
-        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
-      }
-      if (err.name === 'ValidationError') {
-        return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлениии пользователя.`));
+      return res.send({
+        data: user,
+      });
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new IncorrectError(`${INCORRECT_ERROR_MESSAGE} при обновлении информации.`));
       }
       return next(err);
     });
 };
+
 
 module.exports = {
   login,
